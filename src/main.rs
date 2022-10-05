@@ -15,7 +15,12 @@ fn print_help(err: &str) -> ! {
         between float float
         log
         pow float
-            "
+        sqrt
+        add float
+        mul float
+        sub float
+        div float
+"
     );
     std::process::exit(1);
 }
@@ -32,6 +37,19 @@ fn main() {
     println!("{value}");
 }
 
+fn get_number(op: &str, a: &[&str]) -> f64 {
+    a.get(1)
+        .unwrap_or_else(|| {
+            println!("{op} requires arguments");
+            print_help("")
+        })
+        .parse::<f64>()
+        .unwrap_or_else(|_| {
+            println!("{op} requires arguments to be floats");
+            print_help("")
+        })
+}
+
 fn apply(a: &[&str], value: f64) -> f64 {
     if a.is_empty() {
         return value;
@@ -42,30 +60,38 @@ fn apply(a: &[&str], value: f64) -> f64 {
         "ceil" => apply(&a[1..], value.ceil()),
         "round" => apply(&a[1..], value.round()),
         "between" => {
-            let start = a
-                .get(1)
-                .unwrap_or_else(|| print_help("between requires 2 arguments"))
-                .parse::<f64>()
-                .unwrap_or_else(|_| print_help("between needs arguments to be floats"));
-            let end = a
-                .get(2)
-                .unwrap_or_else(|| print_help("between requires 2 arguments"))
-                .parse::<f64>()
-                .unwrap_or_else(|_| print_help("between needs arguments to be floats"));
+            let start = get_number("between", a);
+            let end = get_number("between", &a[1..]);
             let value = value * (end - start) + start;
             apply(&a[3..], value)
         }
         "pow" => {
-            let power = a
-                .get(1)
-                .unwrap_or_else(|| print_help("pow requires 2 arguments"))
-                .parse::<f64>()
-                .unwrap_or_else(|_| print_help("pow needs arguments to be floats"));
-
+            let power = get_number("pow", a);
             let value = value.powf(power);
             apply(&a[2..], value)
         }
+        "add" => {
+            let operand = get_number("add", a);
+            let value = value + operand;
+            apply(&a[2..], value)
+        }
+        "sub" => {
+            let operand = get_number("sub", a);
+            let value = value - operand;
+            apply(&a[2..], value)
+        }
+        "mul" => {
+            let operand = get_number("mul", a);
+            let value = value * operand;
+            apply(&a[2..], value)
+        }
+        "div" => {
+            let operand = get_number("div", a);
+            let value = value / operand;
+            apply(&a[2..], value)
+        }
         "log" => apply(&a[1..], value.log(E)),
+        "sqrt" => apply(&a[1..], value.sqrt()),
         x => print_help(&format!("unknown operation {x}")),
     }
 }
