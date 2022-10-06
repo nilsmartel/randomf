@@ -5,7 +5,6 @@ edition = "2021"
 readme = "./README.md"
 description = "simple cli to generate random numbers"
 license = "MIT"
-documentation = "./README.md"
 repository = "https://github.com/nilsmartel/randomf"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
