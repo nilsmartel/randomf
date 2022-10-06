@@ -34,7 +34,7 @@ fn main() {
     let value: f64 = rand::random();
     let value = apply(&args, value);
 
-    println!("{value}");
+    print!("{value}");
 }
 
 fn get_number(op: &str, a: &[&str]) -> f64 {
